@@ -77,6 +77,7 @@ class Generator(object):
 
         self._ctx = {
             'timestamp': time.mktime(ts),
+            'timestamp_str': time.asctime(ts),
             'in_root': self._in_dir,
             'out_root': out_dir
             }
