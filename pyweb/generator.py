@@ -76,9 +76,11 @@ class Generator(object):
         _create_dir(out_dir)
 
         self._ctx = {
-            'timestamp': time.mktime(ts)
+            'timestamp': time.mktime(ts),
+            'in_root': self._in_dir,
+            'out_root': out_dir
             }
-        self._processors = [c() for c in processors.PROCESSORS]
+        self._processors = [c(self._ctx) for c in processors.PROCESSORS]
 
         return out_dir
 
@@ -89,7 +91,7 @@ class Generator(object):
 
         for processor in self._processors:
             if processor.CanProcessFile(file):
-                processor.ProcessFile(self._ctx, i, o)
+                processor.ProcessFile(i, o)
                 return
 
         raise NoProcessorFound(i)

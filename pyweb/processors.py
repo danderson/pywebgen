@@ -11,35 +11,45 @@ import jinja2
 import shutil
 
 
-class JinjaHtmlProcessor(object):
+class _Processor(object):
+    def __init__(self, ctx):
+        self.ctx = ctx
+
+
+class JinjaHtmlProcessor(_Processor):
+    def __init__(self, ctx):
+        super(JinjaHtmlProcessor, self).__init__(ctx)
+        loader = jinja2.FileSystemLoader(ctx['in_root'])
+        self._env = jinja2.Environment(loader=loader)
+
     def CanProcessFile(self, filename):
         return filename.endswith('.html')
 
-    def ProcessFile(self, ctx, in_path, out_path):
+    def ProcessFile(self, in_path, out_path):
         # Assuming UTF-8, else screw you.
         in_str = open(in_path, 'rb').read().decode('utf-8')
-        template = jinja2.Template(in_str)
-        out_str = template.render(**ctx).encode('utf-8')
+        template = self._env.from_string(in_str)
+        out_str = template.render(**self.ctx).encode('utf-8')
 
         f = open(out_path, 'wb')
         f.write(out_str)
         f.close()
 
 
-class IgnoreProtectedFileProcessor(object):
+class IgnoreProtectedFileProcessor(_Processor):
     def CanProcessFile(self, filename):
         return filename[0] == '_'
 
-    def ProcessFile(self, ctx, in_path, out_path):
+    def ProcessFile(self, in_path, out_path):
         # Do nothing, effectively skipping this file.
         pass
 
 
-class CopyFileProcessor(object):
+class CopyFileProcessor(_Processor):
     def CanProcessFile(self, filename):
         return True
 
-    def ProcessFile(self, ctx, in_path, out_path):
+    def ProcessFile(self, in_path, out_path):
         shutil.copy(in_path, out_path)
 
 
