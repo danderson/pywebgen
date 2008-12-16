@@ -38,7 +38,7 @@ class JinjaHtmlProcessor(_Processor):
 
 class IgnoreProtectedFileProcessor(_Processor):
     def CanProcessFile(self, filename):
-        return filename[0] == '_'
+        return filename[0] == '_' or filename[-1] == '~'
 
     def ProcessFile(self, in_path, out_path):
         # Do nothing, effectively skipping this file.
