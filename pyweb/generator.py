@@ -11,6 +11,7 @@ import os.path
 import shutil
 import time
 
+import processors
 
 class Error(Exception):
     """Base class for generator errors"""
@@ -20,6 +21,9 @@ class MissingInputDirectory(Error):
 
 class ObstructedOutputPath(Error):
     """The given output path is obstructed by a non-directory."""
+
+class NoProcessorFound(Error):
+    """No processor was found to process an input file."""
 
 
 def _create_dir(path):
@@ -50,10 +54,7 @@ class Generator(object):
 
     def Generate(self):
         """Generate a new version of the website."""
-        ts = time.strftime('%Y%m%d.%H%M%S')
-        out_dir = os.path.join(self._out_dir, ts)
-        _create_dir(out_dir)
-
+        out_dir = self._PrepareGenerate()
         for root, dirs, files in os.walk(self._in_dir):
             out_root = os.path.join(out_dir, root[len(self._in_dir):])
             _create_dir(out_root)
@@ -65,10 +66,30 @@ class Generator(object):
             # Filter the subdirectories to process.
             dirs[:] = [d for d in dirs if d[0] not in ('.', '_')]
 
+        del self._processors
+        del self._ctx
+
+    def _PrepareGenerate(self):
+        ts = time.localtime()
+        ts_dir = time.strftime('%Y%m%d.%H%M%S', ts)
+        out_dir = os.path.join(self._out_dir, ts_dir)
+        _create_dir(out_dir)
+
+        self._ctx = {
+            'timestamp': time.mktime(ts)
+            }
+        self._processors = [c() for c in processors.PROCESSORS]
+
+        return out_dir
+
     def _ProcessFile(self, in_dir, out_dir, file):
         # TODO(dave): more complex stuff here.
         i = os.path.join(in_dir, file)
         o = os.path.join(out_dir, file)
 
-        shutil.copyfile(i, o)
-        shutil.copymode(i, o)
+        for processor in self._processors:
+            if processor.CanProcessFile(file):
+                processor.ProcessFile(self._ctx, i, o)
+                return
+
+        raise NoProcessorFound(i)
