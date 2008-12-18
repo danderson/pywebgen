@@ -7,10 +7,13 @@
 
 __author__ = 'David Anderson <dave@natulte.net>'
 
-import jinja2
 import shutil
 
-import cssdsl
+import error
+
+
+class UnknownProcessor(error.Error):
+    """Unknown input processor."""
 
 
 class _Processor(object):
@@ -19,7 +22,13 @@ class _Processor(object):
 
 
 class JinjaHtmlProcessor(_Processor):
+    """Generate HTML from a Jinja2 template."""
     def __init__(self, ctx):
+        try:
+            import jinja2
+        except ImportError:
+            raise error.MissingPythonModule('jinja2')
+
         super(JinjaHtmlProcessor, self).__init__(ctx)
         loader = jinja2.FileSystemLoader(ctx['in_root'])
         self._env = jinja2.Environment(loader=loader)
@@ -39,10 +48,13 @@ class JinjaHtmlProcessor(_Processor):
 
 
 class YamlCssProcessor(_Processor):
+    """Generate CSS from a YAML template."""
     def CanProcessFile(self, filename):
         return filename.endswith('.css')
 
     def ProcessFile(self, in_path, out_path):
+        import cssdsl
+
         css = cssdsl.GenerateCss(open(in_path, 'rb').read().decode('utf-8'),
                                  self.ctx['timestamp_str'])
 
@@ -51,24 +63,46 @@ class YamlCssProcessor(_Processor):
         f.close()
 
 
-class IgnoreProtectedFileProcessor(_Processor):
-    def CanProcessFile(self, filename):
+class IgnoreProtectedFileProcessor(object):
+    """Ignore temporary and hidden files."""
+    @staticmethod
+    def CanProcessFile(filename):
         return filename[0] == '_' or filename[-1] == '~'
 
-    def ProcessFile(self, in_path, out_path):
+    @staticmethod
+    def ProcessFile(in_path, out_path):
         # Do nothing, effectively skipping this file.
         pass
 
 
-class CopyFileProcessor(_Processor):
-    def CanProcessFile(self, filename):
+class CopyFileProcessor(object):
+    """Copy any files given to it."""
+    @staticmethod
+    def CanProcessFile(filename):
         return True
 
-    def ProcessFile(self, in_path, out_path):
+    @staticmethod
+    def ProcessFile(in_path, out_path):
         shutil.copy(in_path, out_path)
 
 
-PROCESSORS = [IgnoreProtectedFileProcessor,
-              JinjaHtmlProcessor,
-              YamlCssProcessor,
-              CopyFileProcessor]
+PROCESSORS = {
+    'HtmlJinja': JinjaHtmlProcessor,
+    'CssYaml': YamlCssProcessor,
+}
+
+
+def ListProcessors():
+    return PROCESSORS.keys()
+
+
+def GetProcessors(processors, ctx):
+    processor_classes = []
+    for processor in processors:
+        if processor not in PROCESSORS:
+            raise UnknownProcessor(processor)
+        processor_classes.append(PROCESSORS[processor](ctx))
+
+    return ([IgnoreProtectedFileProcessor] +
+            processor_classes +
+            [CopyFileProcessor])

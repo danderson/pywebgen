@@ -11,18 +11,19 @@ import os.path
 import shutil
 import time
 
+import error
 import processors
 
-class Error(Exception):
-    """Base class for generator errors"""
 
-class MissingInputDirectory(Error):
+class MissingInputDirectory(error.Error):
     """The input directory is missing"""
 
-class ObstructedOutputPath(Error):
+
+class ObstructedOutputPath(error.Error):
     """The given output path is obstructed by a non-directory."""
 
-class NoProcessorFound(Error):
+
+class NoProcessorFound(error.Error):
     """No processor was found to process an input file."""
 
 
@@ -55,6 +56,7 @@ class Generator(object):
     def Generate(self):
         """Generate a new version of the website."""
         out_dir = self._PrepareGenerate()
+
         for root, dirs, files in os.walk(self._in_dir):
             out_root = os.path.join(out_dir, root[len(self._in_dir):])
             _create_dir(out_root)
@@ -81,7 +83,8 @@ class Generator(object):
             'in_root': self._in_dir,
             'out_root': out_dir
             }
-        self._processors = [c(self._ctx) for c in processors.PROCESSORS]
+        self._processors = processors.GetProcessors(['HtmlJinja', 'CssYaml'],
+                                                    self._ctx)
 
         return out_dir
 

@@ -11,6 +11,7 @@ import re
 import yaml
 import yaml.events
 
+import error
 import odict
 
 
@@ -21,7 +22,7 @@ _HEX_FUNC_RE = re.compile(r'hex\(([^\)]+)\)')
 _VAR_FUNC_RE = re.compile(r'(\$[^ ]+)\b')
 
 
-class YamlCssError(Exception):
+class YamlCssError(error.Error):
     """An error occured while parsing a YAML CSS file."""
 
 
