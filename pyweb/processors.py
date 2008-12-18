@@ -10,6 +10,8 @@ __author__ = 'David Anderson <dave@natulte.net>'
 import jinja2
 import shutil
 
+import cssdsl
+
 
 class _Processor(object):
     def __init__(self, ctx):
@@ -36,6 +38,19 @@ class JinjaHtmlProcessor(_Processor):
         f.close()
 
 
+class YamlCssProcessor(_Processor):
+    def CanProcessFile(self, filename):
+        return filename.endswith('.css')
+
+    def ProcessFile(self, in_path, out_path):
+        css = cssdsl.GenerateCss(open(in_path, 'rb').read().decode('utf-8'),
+                                 self.ctx['timestamp_str'])
+
+        f = open(out_path, 'wb')
+        f.write(css)
+        f.close()
+
+
 class IgnoreProtectedFileProcessor(_Processor):
     def CanProcessFile(self, filename):
         return filename[0] == '_' or filename[-1] == '~'
@@ -55,4 +70,5 @@ class CopyFileProcessor(_Processor):
 
 PROCESSORS = [IgnoreProtectedFileProcessor,
               JinjaHtmlProcessor,
+              YamlCssProcessor,
               CopyFileProcessor]

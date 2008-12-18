@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr">
+  <head>
+    {% block header %}
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="keywords" content="www.bulix.org, bulix.org, zwe, blog, maxime petazzoni, sam, bulix" />
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="style.css" title="Bulix.org" />
+    <script type="text/javascript" src="menu.js"></script>
+    <!-- Generated on {{timestamp_str}}. -->
+    {% endblock %}
+  </head>
+  <body class="{% block pagetype %}subp{% endblock %}">
+
+    <h1>
+      <a href="http://www.bulix.org" title="www.bulix.org">
+        <span class="black">maxime</span>petazzoni
+      </a>
+    </h1>
+
+    <dl class="menu">
+      <dt><a href="http://blog.bulix.org" onmouseover="javascript:show('journal');" onmouseout="javascript:hide('journal');">journal</a></dt>
+      <dd id="journal">life snippets</dd>
+
+      <dt><a href="about.html" onmouseover="javascript:show('about');" onmouseout="javascript:hide('about');">about</a></dt>
+      <dd id="about">me, myself and i</dd>
+
+      <dt><a href="work.html" onmouseover="javascript:show('work');" onmouseout="javascript:hide('work');">work</a></dt>
+      <dd id="work">what i'm up to and my projects</dd>
+    </dl>
+
+    <div id="contents">
+      {% block contents %}
+      {% endblock %}
+    </div>
+
+  </body>
+</html>

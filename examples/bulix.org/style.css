@@ -1,0 +1,116 @@
+VARS:
+  darkgray: hex(333)
+  midgray: hex(666)
+  lightgray: hex(999)
+  red: hex(c00)
+
+# Global style
+body:
+  font: 13px Tahoma, "Lucida Grande", Helvetica, Arial, sans-serif
+  margin: 0
+  padding: 0 50px
+  border-top: 3px $darkgray solid
+
+a, a:link: {text-decoration: none, color: $red}
+
+img: {border: none}
+
+span.black: {color: black}
+span.red: {color: $red}
+
+h1: {font-family: 'Helvetica, Arial, sans-serif'}
+
+# Specific style for the index page
+body.main:
+  h1: {margin: 0, margin-top: 50px, font-size: 2em}
+  h2:
+    font-size: 2.5em
+    color: $lightgray
+    margin: 0
+    padding: 0
+    font-weight: normal
+    text-transform: lowercase
+
+  dl.menu:
+    font-size: 2em
+
+    dt:
+      padding: 0
+      margin: 0 0 0 1.5em
+      text-transform: lowercase
+      line-height: 1.15em
+
+    dd:
+      display: none
+      position: absolute
+      top: 14em
+      left: 3em
+      font-size: .5em
+
+
+# Specific style for other pages.
+body.subp:
+  h1: {margin: 0, margin-top: 25px, font-size: 1.25em}
+
+  h2:
+    font-size: 1.10em
+    color: $lightgray
+    margin: 0
+    padding: 0
+    font-weight: normal
+    text-transform: lowercase
+
+  dl.menu:
+    font-size: 1.10em
+    clear: left
+
+    dt:
+      display: inline
+      padding: 0
+      margin: 0
+      text-transform: lowercase
+
+    dd:
+      display: none
+      width: 250px
+      position: absolute
+      top: 6em
+      left: .9em
+      font-size: .75em
+
+dl.menu:
+  color: $lightgray
+  margin: 0
+  padding: 0
+  font-weight: normal
+
+  a: {color: $lightgray !important}
+  a.here, a:hover: {color: $red !important}
+  dt:after: {content: "' /'"}
+
+id(left), id(contents):
+  color: $midgray
+  margin-top: 3em
+  width: 40%
+  h2:
+    font-weight: bold
+    font-size: 1.10em
+    color: black
+    margin-top: 2em
+    margin-bottom: 1em
+
+id(contents) h3: {font-weight: normal, font-size: 1em, text-transform: lowercase}
+
+.filelist, tt, pre: {font-size: smaller}
+
+id(bottom):
+  list-style: none
+  position: fixed
+  bottom: 40px
+  right: 50px
+  width: 250px
+  margin: 0
+  padding: 0
+  color: $lightgray
+  text-transform: lowercase
+  font-size: 11px
