@@ -30,7 +30,7 @@ class JinjaHtmlProcessor(_Processor):
             raise error.MissingPythonModule('jinja2')
 
         super(JinjaHtmlProcessor, self).__init__(ctx)
-        loader = jinja2.FileSystemLoader(ctx['in_root'])
+        loader = jinja2.FileSystemLoader(ctx['input_root'])
         self._env = jinja2.Environment(loader=loader)
 
     def CanProcessFile(self, filename):
@@ -56,7 +56,7 @@ class YamlCssProcessor(_Processor):
         import cssdsl
 
         css = cssdsl.GenerateCss(open(in_path, 'rb').read().decode('utf-8'),
-                                 self.ctx['timestamp_str'])
+                                 self.ctx['timestamp'])
 
         f = open(out_path, 'wb')
         f.write(css)

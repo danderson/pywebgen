@@ -27,75 +27,56 @@ class NoProcessorFound(error.Error):
     """No processor was found to process an input file."""
 
 
-def _create_dir(path):
-    if os.path.exists(path) and not os.path.isdir(path):
+def Generate(input_root, output_root, timestamp=None):
+    """Generate a new version of the website."""
+    input_root = os.path.abspath(input_root)
+    output_root = os.path.abspath(output_root)
+
+    ctx, processor_objs = _PrepareGenerate(input_root, output_root, timestamp)
+
+    for input_dir, dirs, files in os.walk(input_root):
+        output_dir = os.path.join(output_root, input_dir[len(input_root):])
+        _CreateDir(output_dir)
+
+        # Process each file
+        for file in files:
+            _ProcessFile(processor_objs, input_dir, output_dir, file)
+
+        # Filter the subdirectories to process.
+        dirs[:] = [d for d in dirs if d[0] not in ('.', '_')]
+
+
+def _PrepareGenerate(input_root, output_root, timestamp=None):
+    """Prepare website generation and return relevant data."""
+    timestamp = timestamp or time.localtime()
+
+    if not os.path.isdir(input_root):
+        raise MissingInputDirectory(input_root)
+
+    ctx = {
+        'timestamp': time.asctime(timestamp),
+        'input_root': input_root,
+        'output_root': output_root
+        }
+    processor_objs = processors.GetProcessors(['HtmlJinja', 'CssYaml'], ctx)
+
+    return ctx, processor_objs
+
+
+def _ProcessFile(processor_objs, in_dir, out_dir, file):
+    i = os.path.join(in_dir, file)
+    o = os.path.join(out_dir, file)
+
+    for processor in processor_objs:
+        if processor.CanProcessFile(file):
+            processor.ProcessFile(i, o)
+            return
+
+    raise NoProcessorFound(i)
+
+
+def _CreateDir(path):
+    if os.path.exists(path):
         raise ObstructedOutputPath(path)
-    if not os.path.exists(path):
+    else:
         os.makedirs(path)
-
-
-class Generator(object):
-    def __init__(self, input_dir, output_dir):
-        """Initializer.
-
-        Args:
-          input_dir: the directory containing the website input files.
-          output_dir: the directory that will contain the website.
-
-        Raises:
-          MissingInputDirectory: the given path is absent, or not a directory.
-          ObstructedOutputPath: the output path is not a directory.
-        """
-        self._in_dir = os.path.abspath(input_dir)
-        if not os.path.isdir(self._in_dir):
-            raise MissingInputDirectory(self._in_dir)
-
-        self._out_dir = os.path.abspath(output_dir)
-        _create_dir(self._out_dir)
-
-    def Generate(self):
-        """Generate a new version of the website."""
-        out_dir = self._PrepareGenerate()
-
-        for root, dirs, files in os.walk(self._in_dir):
-            out_root = os.path.join(out_dir, root[len(self._in_dir):])
-            _create_dir(out_root)
-
-            # Process each file
-            for file in files:
-                self._ProcessFile(root, out_root, file)
-
-            # Filter the subdirectories to process.
-            dirs[:] = [d for d in dirs if d[0] not in ('.', '_')]
-
-        del self._processors
-        del self._ctx
-
-    def _PrepareGenerate(self):
-        ts = time.localtime()
-        ts_dir = time.strftime('%Y%m%d.%H%M%S', ts)
-        out_dir = os.path.join(self._out_dir, ts_dir)
-        _create_dir(out_dir)
-
-        self._ctx = {
-            'timestamp': time.mktime(ts),
-            'timestamp_str': time.asctime(ts),
-            'in_root': self._in_dir,
-            'out_root': out_dir
-            }
-        self._processors = processors.GetProcessors(['HtmlJinja', 'CssYaml'],
-                                                    self._ctx)
-
-        return out_dir
-
-    def _ProcessFile(self, in_dir, out_dir, file):
-        # TODO(dave): more complex stuff here.
-        i = os.path.join(in_dir, file)
-        o = os.path.join(out_dir, file)
-
-        for processor in self._processors:
-            if processor.CanProcessFile(file):
-                processor.ProcessFile(i, o)
-                return
-
-        raise NoProcessorFound(i)
