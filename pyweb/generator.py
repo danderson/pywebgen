@@ -27,12 +27,13 @@ class NoProcessorFound(error.Error):
     """No processor was found to process an input file."""
 
 
-def Generate(input_root, output_root, timestamp=None):
+def Generate(input_root, output_root, use_processors, timestamp=None):
     """Generate a new version of the website."""
     input_root = os.path.abspath(input_root)
     output_root = os.path.abspath(output_root)
 
-    ctx, processor_objs = _PrepareGenerate(input_root, output_root, timestamp)
+    ctx, processor_objs = _PrepareGenerate(input_root, output_root,
+                                           use_processors, timestamp)
 
     for input_dir, dirs, files in os.walk(input_root):
         output_dir = os.path.join(output_root, input_dir[len(input_root):])
@@ -46,7 +47,7 @@ def Generate(input_root, output_root, timestamp=None):
         dirs[:] = [d for d in dirs if d[0] not in ('.', '_')]
 
 
-def _PrepareGenerate(input_root, output_root, timestamp=None):
+def _PrepareGenerate(input_root, output_root, use_processors, timestamp=None):
     """Prepare website generation and return relevant data."""
     timestamp = timestamp or time.localtime()
 
@@ -58,7 +59,7 @@ def _PrepareGenerate(input_root, output_root, timestamp=None):
         'input_root': input_root,
         'output_root': output_root
         }
-    processor_objs = processors.GetProcessors(['HtmlJinja', 'CssYaml'], ctx)
+    processor_objs = processors.GetProcessors(use_processors, ctx)
 
     return ctx, processor_objs
 
