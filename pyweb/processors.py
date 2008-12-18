@@ -53,10 +53,10 @@ class YamlCssProcessor(_Processor):
         return filename.endswith('.css')
 
     def ProcessFile(self, in_path, out_path):
-        import cssdsl
+        import cssyaml
 
-        css = cssdsl.GenerateCss(open(in_path, 'rb').read().decode('utf-8'),
-                                 self.ctx['timestamp'])
+        css = cssyaml.GenerateCss(open(in_path, 'rb').read().decode('utf-8'),
+                                  self.ctx['timestamp'])
 
         f = open(out_path, 'wb')
         f.write(css)
