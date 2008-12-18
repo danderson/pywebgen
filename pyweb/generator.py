@@ -29,10 +29,16 @@ class Generator(object):
         self._input_root = os.path.abspath(input_root)
         self._processors = processors.GetProcessors(use_processors)
 
-    def Generate(self, output_root, timestamp=None):
+    def Generate(self, output_root, timestamp=None, manifest_path=None):
         """Generate the website into the given output root."""
+        self._Prepare(output_root, timestamp, manifest_path)
+        self._GenerateTree()
+        self._Cleanup()
+
+    def _Prepare(self, output_root, timestamp, manifest_path):
         self._output_root = os.path.abspath(output_root)
         timestamp = timestamp or time.localtime()
+        self._manifest_path = manifest_path
 
         if not os.path.isdir(self._input_root):
             raise MissingInputDirectory(self._input_root)
@@ -43,14 +49,21 @@ class Generator(object):
             'output_root': output_root
             }
 
+        self._manifest = []
+
         for processor in self._processors:
             processor.StartProcessing(self._ctx)
 
-        self._GenerateTree()
-
+    def _Cleanup(self):
         for processor in self._processors:
             processor.EndProcessing()
 
+        if self._manifest_path:
+            self._manifest.append('')
+            util.WriteFileContent(self._manifest_path,
+                                  '\n'.join(self._manifest))
+
+        del self._manifest
         del self._ctx
         del self._output_root
 
@@ -68,8 +81,10 @@ class Generator(object):
     def _ProcessFile(self, input_path):
         for processor in self._processors:
             if processor.CanProcessFile(input_path):
-                processor.ProcessFile(input_path,
-                                      self._InputToOutput(input_path))
+                output_path = self._InputToOutput(input_path)
+                if processor.ProcessFile(input_path, output_path):
+                    self._manifest.append(
+                        util.PathAsSuffix(output_path, self._output_root))
                 return
 
         raise NoProcessorFound(input_path)

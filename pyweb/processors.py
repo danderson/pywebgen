@@ -65,6 +65,8 @@ class HtmlJinjaProcessor(_Processor):
 
         util.WriteFileContent(out_path, out_str)
 
+        return True
+
     def EndProcessing(self):
         del self._env
         del self._ctx
@@ -91,6 +93,8 @@ class CssYamlProcessor(_Processor):
 
         util.WriteFileContent(out_path, css)
 
+        return True
+
     def EndProcessing(self):
         del self._ctx
 
@@ -115,6 +119,7 @@ class CopyFileProcessor(_Processor):
 
     def ProcessFile(self, in_path, out_path):
         shutil.copy(in_path, out_path)
+        return True
 
 
 PROCESSORS = {

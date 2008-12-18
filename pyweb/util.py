@@ -84,6 +84,26 @@ def WriteFileContent(filename, content, codec='utf-8'):
     f.close()
 
 
+def PathAsSuffix(path, root):
+    """Return path, with the root stripped off.
+
+    Args:
+      path: the full path.
+      root: the path prefix to strip.
+
+    Returns:
+      The path suffix.
+
+    Raises:
+      AssertionError: root is not a prefix of path.
+    """
+    assert path.startswith(root)
+    suffix = path[len(root):]
+    if suffix.startswith('/'):
+        suffix = suffix[1:]
+    return suffix
+
+
 def RelocatePath(path, orig_root, new_root):
     """Compute a path's new location under a new root directory.
 
@@ -98,10 +118,7 @@ def RelocatePath(path, orig_root, new_root):
     Raises:
       AssertionError: orig_root is not a prefix of path.
     """
-    assert path.startswith(orig_root)
-    suffix = path[len(orig_root):]
-    if suffix.startswith('/'):
-        suffix = suffix[1:]
+    suffix = PathAsSuffix(path, orig_root)
     return os.path.join(new_root, suffix)
 
 

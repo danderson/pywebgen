@@ -24,6 +24,8 @@ VERSION = '0.1.0'
 
 def main():
     parser = optparse.OptionParser(usage=USAGE, version='%prog ' + VERSION)
+    parser.add_option("-m", "--manifest", action="store", type="string",
+                      dest="manifest")
     (options, args) = parser.parse_args()
 
     if len(args) != 2:
@@ -31,6 +33,6 @@ def main():
         return 1
 
     gen = generator.Generator(args[0], ['HtmlJinja', 'CssYaml'])
-    gen.Generate(args[1])
+    gen.Generate(args[1], manifest_path=options.manifest)
 
     return 0
