@@ -49,6 +49,13 @@ class HtmlJinjaProcessor(_Processor):
 
 class CssYamlProcessor(_Processor):
     """Generate CSS from a YAML template."""
+    def __init__(self, ctx):
+        super(CssYamlProcessor, self).__init__(ctx)
+
+        # This import will make the processor fail at instanciation
+        # time if the cssyaml module is missing dependencies.
+        import cssyaml
+
     def CanProcessFile(self, filename):
         return filename.endswith('.css')
 
