@@ -21,7 +21,7 @@ class _Processor(object):
         self.ctx = ctx
 
 
-class JinjaHtmlProcessor(_Processor):
+class HtmlJinjaProcessor(_Processor):
     """Generate HTML from a Jinja2 template."""
     def __init__(self, ctx):
         try:
@@ -29,7 +29,7 @@ class JinjaHtmlProcessor(_Processor):
         except ImportError:
             raise error.MissingPythonModule('jinja2')
 
-        super(JinjaHtmlProcessor, self).__init__(ctx)
+        super(HtmlJinjaProcessor, self).__init__(ctx)
         loader = jinja2.FileSystemLoader(ctx['input_root'])
         self._env = jinja2.Environment(loader=loader)
 
@@ -47,7 +47,7 @@ class JinjaHtmlProcessor(_Processor):
         f.close()
 
 
-class YamlCssProcessor(_Processor):
+class CssYamlProcessor(_Processor):
     """Generate CSS from a YAML template."""
     def CanProcessFile(self, filename):
         return filename.endswith('.css')
@@ -87,8 +87,8 @@ class CopyFileProcessor(object):
 
 
 PROCESSORS = {
-    'HtmlJinja': JinjaHtmlProcessor,
-    'CssYaml': YamlCssProcessor,
+    'HtmlJinja': HtmlJinjaProcessor,
+    'CssYaml': CssYamlProcessor,
 }
 
 
