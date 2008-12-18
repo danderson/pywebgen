@@ -3,13 +3,14 @@
 # Redistribution of this file is permitted under
 # the terms of the GNU Public License (GPL) version 2.
 
-"""Processors take input files and munge them in some way."""
+"""Processors take input files and munge them into an output file."""
 
 __author__ = 'David Anderson <dave@natulte.net>'
 
 import shutil
 
 import error
+import util
 
 
 class UnknownProcessor(error.Error):
@@ -17,10 +18,20 @@ class UnknownProcessor(error.Error):
 
 
 class _Processor(object):
+    """Base class for file processors."""
     def __init__(self, ctx):
         self.ctx = ctx
 
+    def CanProcessFile(self, filename):
+        raise NotImplementedError()
 
+    def ProcessFile(self, in_path, out_path):
+        raise NotImplementedError()
+
+
+#
+# General processors
+#
 class HtmlJinjaProcessor(_Processor):
     """Generate HTML from a Jinja2 template."""
     def __init__(self, ctx):
@@ -38,13 +49,12 @@ class HtmlJinjaProcessor(_Processor):
 
     def ProcessFile(self, in_path, out_path):
         # Assuming UTF-8, else screw you.
-        in_str = open(in_path, 'rb').read().decode('utf-8')
-        template = self._env.from_string(in_str)
-        out_str = template.render(**self.ctx).encode('utf-8')
+        in_str = util.ReadFileContent(in_path)
 
-        f = open(out_path, 'wb')
-        f.write(out_str)
-        f.close()
+        template = self._env.from_string(in_str)
+        out_str = template.render(**self.ctx)
+
+        util.WriteFileContent(out_path, out_str)
 
 
 class CssYamlProcessor(_Processor):
@@ -62,14 +72,15 @@ class CssYamlProcessor(_Processor):
     def ProcessFile(self, in_path, out_path):
         import cssyaml
 
-        css = cssyaml.GenerateCss(open(in_path, 'rb').read().decode('utf-8'),
+        css = cssyaml.GenerateCss(util.ReadFileContent(in_path),
                                   self.ctx['timestamp'])
 
-        f = open(out_path, 'wb')
-        f.write(css)
-        f.close()
+        util.WriteFileContent(out_path, css)
 
 
+#
+# Special internal processors.
+#
 class IgnoreProtectedFileProcessor(object):
     """Ignore temporary and hidden files."""
     @staticmethod
@@ -104,12 +115,12 @@ def ListProcessors():
 
 
 def GetProcessors(processors, ctx):
-    processor_classes = []
+    processor_objs = []
     for processor in processors:
         if processor not in PROCESSORS:
             raise UnknownProcessor(processor)
-        processor_classes.append(PROCESSORS[processor](ctx))
+        processor_objs.append(PROCESSORS[processor](ctx))
 
     return ([IgnoreProtectedFileProcessor] +
-            processor_classes +
+            processor_objs +
             [CopyFileProcessor])
