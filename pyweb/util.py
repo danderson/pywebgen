@@ -82,3 +82,45 @@ def WriteFileContent(filename, content, codec='utf-8'):
     f = open(filename, 'wb')
     f.write(content)
     f.close()
+
+
+def RelocatePath(path, orig_root, new_root):
+    """Compute a path's new location under a new root directory.
+
+    Args:
+      path: the path to relocate.
+      orig_root: the prefix of path that is the original root.
+      new_root: the new relocated prefix.
+
+    Returns:
+      The relocated path.
+
+    Raises:
+      AssertionError: orig_root is not a prefix of path.
+    """
+    assert path.startswith(orig_root)
+    suffix = path[len(orig_root):]
+    if suffix.startswith('/'):
+        suffix = suffix[1:]
+    return os.path.join(new_root, suffix)
+
+
+def CreateDir(path):
+    """Create a directory, if it does not already exist.
+
+    This function recursively creates directories as needed.
+
+    Args:
+      path: the directory to create.
+
+    Raises:
+      PathObstructedError: the given path is obstructed by a non-dir.
+    """
+    if os.path.exists(path) and not os.path.isdir(path):
+        raise PathObstructedError(path)
+
+    if not os.path.exists(path):
+        try:
+            os.makedirs(path)
+        except os.error:
+            raise PathObstructedError(path)

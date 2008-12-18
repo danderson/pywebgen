@@ -13,71 +13,66 @@ import time
 
 import error
 import processors
+import util
 
 
 class MissingInputDirectory(error.Error):
     """The input directory is missing"""
 
 
-class ObstructedOutputPath(error.Error):
-    """The given output path is obstructed by a non-directory."""
-
-
 class NoProcessorFound(error.Error):
     """No processor was found to process an input file."""
 
 
-def Generate(input_root, output_root, use_processors, timestamp=None):
-    """Generate a new version of the website."""
-    input_root = os.path.abspath(input_root)
-    output_root = os.path.abspath(output_root)
+class Generator(object):
+    def __init__(self, input_root, use_processors):
+        self._input_root = os.path.abspath(input_root)
+        self._processors = processors.GetProcessors(use_processors)
 
-    ctx, processor_objs = _PrepareGenerate(input_root, output_root,
-                                           use_processors, timestamp)
+    def Generate(self, output_root, timestamp=None):
+        """Generate the website into the given output root."""
+        self._output_root = os.path.abspath(output_root)
+        timestamp = timestamp or time.localtime()
 
-    for input_dir, dirs, files in os.walk(input_root):
-        output_dir = os.path.join(output_root, input_dir[len(input_root):])
-        _CreateDir(output_dir)
+        if not os.path.isdir(self._input_root):
+            raise MissingInputDirectory(self._input_root)
 
-        # Process each file
-        for file in files:
-            _ProcessFile(processor_objs, input_dir, output_dir, file)
+        self._ctx = {
+            'timestamp': time.asctime(timestamp),
+            'input_root': self._input_root,
+            'output_root': output_root
+            }
 
-        # Filter the subdirectories to process.
-        dirs[:] = [d for d in dirs if d[0] not in ('.', '_')]
+        for processor in self._processors:
+            processor.StartProcessing(self._ctx)
 
+        self._GenerateTree()
 
-def _PrepareGenerate(input_root, output_root, use_processors, timestamp=None):
-    """Prepare website generation and return relevant data."""
-    timestamp = timestamp or time.localtime()
+        for processor in self._processors:
+            processor.EndProcessing()
 
-    if not os.path.isdir(input_root):
-        raise MissingInputDirectory(input_root)
+        del self._ctx
+        del self._output_root
 
-    ctx = {
-        'timestamp': time.asctime(timestamp),
-        'input_root': input_root,
-        'output_root': output_root
-        }
-    processor_objs = processors.GetProcessors(use_processors, ctx)
+    def _GenerateTree(self):
+        for input_dir, dirs, files in os.walk(self._input_root):
+            util.CreateDir(self._InputToOutput(input_dir))
 
-    return ctx, processor_objs
+            # Process each file.
+            for file in files:
+                self._ProcessFile(os.path.join(input_dir, file))
 
+            # Filter directories to process.
+            dirs[:] = [d for d in dirs if d[0] not in ('.', '_')]
 
-def _ProcessFile(processor_objs, in_dir, out_dir, file):
-    i = os.path.join(in_dir, file)
-    o = os.path.join(out_dir, file)
+    def _ProcessFile(self, input_path):
+        for processor in self._processors:
+            if processor.CanProcessFile(input_path):
+                processor.ProcessFile(input_path,
+                                      self._InputToOutput(input_path))
+                return
 
-    for processor in processor_objs:
-        if processor.CanProcessFile(file):
-            processor.ProcessFile(i, o)
-            return
+        raise NoProcessorFound(input_path)
 
-    raise NoProcessorFound(i)
-
-
-def _CreateDir(path):
-    if os.path.exists(path):
-        raise ObstructedOutputPath(path)
-    else:
-        os.makedirs(path)
+    def _InputToOutput(self, path):
+        return util.RelocatePath(path, self._input_root, self._output_root)

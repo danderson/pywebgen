@@ -30,6 +30,7 @@ def main():
         parser.print_help()
         return 1
 
-    generator.Generate(args[0], args[1], ['HtmlJinja', 'CssYaml'])
+    gen = generator.Generator(args[0], ['HtmlJinja', 'CssYaml'])
+    gen.Generate(args[1])
 
     return 0
