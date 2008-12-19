@@ -142,7 +142,7 @@ class VersionnedGenerator(object):
 
         if current and current == ts[version]:
             # Nothing to do, we're current already.
-            return
+            return current
 
         # (re)point the symlink
         if self._deploy_dir:

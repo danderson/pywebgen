@@ -13,8 +13,10 @@ and dropping the file in a generated output directory.
 __author__ = 'David Anderson <dave@natulte.net>'
 
 import optparse
+import os.path
 import sys
 
+import container
 import deploy
 import generator
 import odict
@@ -23,6 +25,31 @@ import versions
 
 VERSION = '0.1.0'
 OPTPARSE_VERSION = '%prog ' + VERSION
+
+
+def startsite_cmd(cmdline):
+    STARTSITE_USAGE = '%prog startsite [-d <deploy_dir>] <site dir>'
+    parser = optparse.OptionParser(usage=STARTSITE_USAGE,
+                                   version=OPTPARSE_VERSION,
+                                   add_help_option=False)
+    parser.add_option('-d', '--deploy-dir', action='store',
+                      type='string', dest='deploy_dir')
+    parser.add_option('-E', '--embed-pyweb', action='store_true',
+                      dest='embed_pyweb')
+    (options, args) = parser.parse_args(cmdline)
+
+    if len(args) != 1:
+        parser.print_help()
+        return 2
+
+    if os.path.exists(args[0]):
+        print 'Path already exists, cannot create site.'
+        return 1
+
+    container.Container.Create(args[0], options.deploy_dir,
+                               embed_pyweb=options.embed_pyweb)
+    print 'Created site container in %s' % args[0]
+    return 0
 
 
 def generate_cmd(cmdline):
@@ -178,13 +205,14 @@ def undeploy_cmd(cmdline):
 
 
 COMMANDS = odict.OrderedDict((
-    ('generate', generate_cmd),
-    ('vgenerate', vgenerate_cmd),
-    ('vcurrent', vcurrent_cmd),
-    ('vinfo', vinfo_cmd),
-    ('vgc', vgc_cmd),
-    ('deploy', deploy_cmd),
-    ('undeploy', undeploy_cmd)))
+        ('startsite', startsite_cmd),
+        ('generate', generate_cmd),
+        ('vgenerate', vgenerate_cmd),
+        ('vcurrent', vcurrent_cmd),
+        ('vinfo', vinfo_cmd),
+        ('vgc', vgc_cmd),
+        ('deploy', deploy_cmd),
+        ('undeploy', undeploy_cmd)))
 
 
 def main():
