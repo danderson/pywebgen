@@ -102,7 +102,7 @@ class VersionnedGenerator(object):
         if self._LinkExists(link):
             os.remove(link_path)
 
-        os.symlink(os.path.join(self._output_root, ts), link_path)
+        os.symlink(ts, link_path)
 
     def Generate(self, input_root, use_processors):
         ts = time.localtime()
