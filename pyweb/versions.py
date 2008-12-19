@@ -51,7 +51,10 @@ class NoVersionsError(error.Error):
 class VersionnedGenerator(object):
     def __init__(self, output_root, deploy_dir=None):
         self._output_root = os.path.abspath(output_root)
-        self._deploy_dir = os.path.abspath(deploy_dir)
+        if deploy_dir:
+            self._deploy_dir = os.path.abspath(deploy_dir)
+        else:
+            self._deploy_dir = None
         util.CreateDir(self._output_root)
 
     def _FindTimestamps(self):
