@@ -32,15 +32,26 @@ def _ManifestFileIterator(in_root, out_root, manifest_file):
     for file in (f for f in manifest.splitlines() if f.strip()):
         in_file = os.path.join(in_root, file)
         out_file = os.path.join(out_root, file)
+
+        if in_file == out_file:
+            continue
+
         yield in_file, out_file
 
 
 def Deploy(in_root, out_root, manifest_file):
+    # First check that no files are obstructing deployment.
     for in_file, out_file in _ManifestFileIterator(in_root, out_root,
                                                    manifest_file):
-        if in_file == out_file:
-            continue
+        if os.path.isdir(in_file):
+            if os.path.exists(out_file) and not os.path.isdir(out_file):
+                raise util.PathObstructedError(out_file)
+        elif os.path.exists(out_file):
+            raise util.PathObstructedError(out_file)
 
+    # All is well, deploy.
+    for in_file, out_file in _ManifestFileIterator(in_root, out_root,
+                                                   manifest_file):
         if os.path.isdir(in_file):
             util.CreateDir(out_file)
         else:
@@ -50,9 +61,6 @@ def Deploy(in_root, out_root, manifest_file):
 def Undeploy(in_root, out_root, manifest_file):
     for in_file, out_file in _ManifestFileIterator(in_root, out_root,
                                                    manifest_file):
-        if in_file == out_file:
-            continue
-
         if os.path.isdir(in_file):
             # Only delete an output directory if it's still a
             # directory, and it's empty.
