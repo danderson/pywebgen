@@ -90,7 +90,7 @@ class VersionnedGenerator(object):
         link_path = self._LinkLocation(link)
         if not os.path.exists(link_path):
             return False
-        elif not os.path.islink(link_path):
+        elif not os.path.islink(link_path) or not os.path.exists(link_path):
             raise InvalidLinkError(link)
         return True
 
