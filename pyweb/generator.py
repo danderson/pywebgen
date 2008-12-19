@@ -58,10 +58,7 @@ class Generator(object):
         for processor in self._processors:
             processor.EndProcessing()
 
-        if self._manifest_path:
-            self._manifest.append('')
-            util.WriteFileContent(self._manifest_path,
-                                  '\n'.join(self._manifest))
+        self._OutputManifest()
 
         del self._manifest
         del self._ctx
@@ -70,6 +67,8 @@ class Generator(object):
     def _GenerateTree(self):
         for input_dir, dirs, files in os.walk(self._input_root):
             util.CreateDir(self._InputToOutput(input_dir))
+            self._manifest.append(
+                util.PathAsSuffix(input_dir, self._input_root))
 
             # Process each file.
             for file in files:
@@ -88,6 +87,16 @@ class Generator(object):
                 return
 
         raise NoProcessorFound(input_path)
+
+    def _OutputManifest(self):
+        if not self._manifest_path:
+            return
+
+        # Append '' to get an \n at the end of the file, and remove
+        # the first entry because it's the '' for the output root.
+        self._manifest.append('')
+        util.WriteFileContent(self._manifest_path,
+                              '\n'.join(self._manifest[1:]))
 
     def _InputToOutput(self, path):
         return util.RelocatePath(path, self._input_root, self._output_root)
