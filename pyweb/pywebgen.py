@@ -30,8 +30,8 @@ def generate_cmd(cmdline):
     parser = optparse.OptionParser(usage=GENERATE_USAGE,
                                    version=OPTPARSE_VERSION,
                                    add_help_option=False)
-    parser.add_option("-m", "--manifest", action="store",
-                      type="string", dest="manifest")
+    parser.add_option('-m', '--manifest', action='store',
+                      type='string', dest='manifest')
 
     (options, args) = parser.parse_args(cmdline)
 
@@ -49,13 +49,15 @@ def vgenerate_cmd(cmdline):
     parser = optparse.OptionParser(usage=VGENERATE_USAGE,
                                    version=OPTPARSE_VERSION,
                                    add_help_option=False)
+    parser.add_option('-d', '--deploy-dir', action='store',
+                      type='string', dest='deploy_dir')
     (options, args) = parser.parse_args(cmdline)
 
     if len(args) != 2:
         parser.print_help()
         return 2
 
-    gen = versions.VersionnedGenerator(args[1])
+    gen = versions.VersionnedGenerator(args[1], options.deploy_dir)
     ts, out, manifest, current = gen.Generate(args[0], ['HtmlJinja', 'CssYaml'])
     if current:
         print 'Generated version %s and made current.' % ts
@@ -69,13 +71,15 @@ def vcurrent_cmd(cmdline):
     parser = optparse.OptionParser(usage=VCURRENT_USAGE,
                                    version=OPTPARSE_VERSION,
                                    add_help_option=False)
+    parser.add_option('-d', '--deploy-dir', action='store',
+                      type='string', dest='deploy_dir')
     (options, args) = parser.parse_args(cmdline)
 
     if len(args) != 2:
         parser.print_help()
         return 2
 
-    if args[1] == "latest":
+    if args[1] == 'latest':
         version = 0
     else:
         try:
@@ -84,7 +88,7 @@ def vcurrent_cmd(cmdline):
             print 'Version must be an integer, or "latest"'
             return 2
 
-    gen = versions.VersionnedGenerator(args[0])
+    gen = versions.VersionnedGenerator(args[0], options.deploy_dir)
     ts = gen.ChangeCurrent(version)
     print 'Set current version to %s.' % ts
     return 0

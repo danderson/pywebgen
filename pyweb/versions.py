@@ -24,6 +24,7 @@ import re
 import shutil
 import time
 
+import deploy
 import error
 import generator
 import util
@@ -48,8 +49,9 @@ class NoVersionsError(error.Error):
 
 
 class VersionnedGenerator(object):
-    def __init__(self, output_root):
+    def __init__(self, output_root, deploy_dir=None):
         self._output_root = os.path.abspath(output_root)
+        self._deploy_dir = os.path.abspath(deploy_dir)
         util.CreateDir(self._output_root)
 
     def _FindTimestamps(self):
@@ -60,6 +62,12 @@ class VersionnedGenerator(object):
                 timestamps.append(match.group(1))
         timestamps.sort(reverse=True)
         return timestamps
+
+    def _SiteLocation(self, ts):
+        return os.path.join(self._output_root, ts)
+
+    def _ManifestLocation(self, ts):
+        return os.path.join(self._output_root, '%s.MANIFEST' % ts)
 
     def _LinkLocation(self, link):
         return os.path.join(self._output_root, link)
@@ -96,8 +104,8 @@ class VersionnedGenerator(object):
     def Generate(self, input_root, use_processors):
         ts = time.localtime()
         ts_str = time.strftime('%Y%m%d-%H%M%S', ts)
-        out_dir = os.path.join(self._output_root, ts_str)
-        manifest_file = os.path.join(self._output_root, '%s.MANIFEST' % ts_str)
+        out_dir = self._SiteLocation(ts_str)
+        manifest_file = self._ManifestLocation(ts_str)
 
         generator.Generator(input_root, use_processors).Generate(
             out_dir, timestamp=ts, manifest_path=manifest_file)
@@ -106,6 +114,8 @@ class VersionnedGenerator(object):
 
         if not self._LinkExists(_CURRENT_LINK):
             self._SetLink(_CURRENT_LINK, ts_str)
+            if self._deploy_dir:
+                deploy.Deploy(out_dir, self._deploy_dir, manifest_file)
             current = True
         else:
             current = False
@@ -132,7 +142,15 @@ class VersionnedGenerator(object):
             return
 
         # (re)point the symlink
+        if self._deploy_dir:
+            deploy.Undeploy(self._SiteLocation(current),
+                            self._deploy_dir,
+                            self._ManifestLocation(current))
         self._SetLink(_CURRENT_LINK, ts[version])
+        if self._deploy_dir:
+            deploy.Deploy(self._SiteLocation(ts[version]),
+                          self._deploy_dir,
+                          self._ManifestLocation(ts[version]))
 
         return ts[version]
 
