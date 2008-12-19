@@ -118,6 +118,29 @@ def vinfo_cmd(cmdline):
     return 0
 
 
+def vgc_cmd(cmdline):
+    VGC_USAGE = '%prog vgc <versions_dir>'
+    parser = optparse.OptionParser(usage=VGC_USAGE,
+                                   version=OPTPARSE_VERSION,
+                                   add_help_option=False)
+    (options, args) = parser.parse_args(cmdline)
+
+    if len(args) != 1:
+        parser.print_help()
+        return 2
+
+    gen = versions.VersionnedGenerator(args[0])
+    gc_versions = gen.GarbageCollect()
+
+    if not gc_versions:
+        print 'Nothing to garbage collect or no current version to base from.'
+    else:
+        print 'Garbage collected %d versions:' % len(gc_versions)
+        print '\n'.join(['  %s' % v for v in gc_versions])
+
+    return 0
+
+
 def deploy_cmd(cmdline):
     DEPLOY_USAGE = ('%prog deploy <webgen output dir> '
                     '<deploy dir> <webgen manifest>')
@@ -155,6 +178,7 @@ COMMANDS = odict.OrderedDict((
     ('vgenerate', vgenerate_cmd),
     ('vcurrent', vcurrent_cmd),
     ('vinfo', vinfo_cmd),
+    ('vgc', vgc_cmd),
     ('deploy', deploy_cmd),
     ('undeploy', undeploy_cmd)))
 

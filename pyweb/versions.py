@@ -21,6 +21,7 @@ __author__ = 'David Anderson <dave@natulte.net>'
 import os
 import os.path
 import re
+import shutil
 import time
 
 import error
@@ -124,3 +125,18 @@ class VersionnedGenerator(object):
         self._SetCurrent(ts[version])
 
         return ts[version]
+
+    def GarbageCollect(self):
+        ts = self._FindTimestamps()
+        current = self._CurrentTimestamp()
+
+        # If there is no current pointer, we don't know what to GC.
+        if not current:
+            return []
+
+        to_gc = ts[ts.index(current)+1:]
+        for version in to_gc:
+            os.remove(os.path.join(self._output_root, '%s.MANIFEST' % version))
+            shutil.rmtree(os.path.join(self._output_root, version))
+
+        return to_gc
