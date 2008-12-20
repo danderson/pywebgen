@@ -5,31 +5,42 @@
 <p class="intro">Pywebgen is a toolkit that helps you generate and manage a static
   website.</p>
 
-<p class="intro">A static website is composed only of plain HTML pages and data,
-  with no dynamic languages such as PHP, no CGI scripts, just plain
-  files that the web server can serve without thinking about it.</p>
+<p class="intro">A static website is composed only of plain HTML pages
+  and data, with no dynamic parts. It's a site that the web server can
+  serve without thinking about it.</p>
 
 <p>The problem with static websites is that there is often a lot of
-  boilerplate: page headers, footers, menu bars... Copying and pasting
-  this boilerplate between files is very error-prone (as well as being
-  aesthetically offensive), and you usually end up with pages that
-  start slowly drifting apart, as small mutations start taking
-  hold.</p>
+  boilerplate: page headers, footers, menu bars... The usual solution
+  to this involves copying and pasting the boilerplate between files,
+  or switching to dynamic pages just for trivial "include this file"
+  functionality.</p>
 
 <p>Pywebgen solves this problem by letting you create your website as
   a set of template files, and then generating the actual site from
-  these templates. This lets you write your boilerplate once, and
-  refer to it cleanly from all your pages.</p>
+  these templates. This lets you write your boilerplate only once,
+  like with dynamic languages, but still produces a completely static
+  website that is very friendly to serve.</p>
 
-<p>Pywebgen also offers some basic versionning support: after hacking
-  around with a new iteration of your website, you can instruct
-  pywebgen to generate a new version of your site, check this version
-  to make sure it looks right, and then give the order to deploy it as
-  the new "production" version of the site. This distinction between
-  generated versions and the version that is actually live lets you
-  develop and experiment in peace, without fear that you'll suddenly
-  break your site for all your visitors.</p>
+<p>While I believe that pywebgen is quite easy to use, please note
+  that it was developped with the "power user" in mind. It's not a
+  Frontpage Express, and given its young age, it may require a little
+  bit of tweaking to get working properly.</p>
 
-<p>Blah, blah, blah... I really suck at selling stuff.</p>
+<h2>Features</h2>
+
+<ul>
+  <li><em>Generation of HTML pages</em>
+  from <a href="http://jinja.pocoo.org/2/">Jinja2</a> templates.</li>
+  <li><em>Generation of CSS stylesheets</em> from a small
+  custom <a href="http://www.yaml.org">YAML</a>-like language</li>
+  <li><em>Simple versionning support</em>: a new version of the site
+  that you generate doesn't become the "live" version until you decide
+  to make it so.</li>
+  <li><em>Deployment support</em>: you can deploy your static website into a
+  directory containing other data, and later undeploy it without
+  touching the other files in the directory.</li>
+</ul>
+
+<p>Interested? Time to <a href="gettingstarted.html">get started</a> then!</p>
 
 {% endblock %}

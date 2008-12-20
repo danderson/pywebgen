@@ -1,6 +1,3 @@
-VARS:
-  menu_width: 10em
-
 html:
   margin: 0
   padding: 0
@@ -52,3 +49,14 @@ p.intro:
   font-size: larger
   color: black
 
+em:
+  font-weight: bold
+
+pre:
+  margin-left: 2em
+  padding: 0.5em
+  background-color: hex(ddd)
+  border: 1px solid hex(999)
+
+tt:
+  background-color: hex(ddd)
