@@ -45,9 +45,17 @@ id(contents):
   padding: 1em 0 0 0
 
 p.intro:
-  margin-left: 20%
+  #padding-left: 2em
   font-size: larger
   color: black
+
+img.intro:
+  float: left
+  margin-right: 2em
+  margin-bottom: 1em
+
+h2:
+  clear: left
 
 em:
   font-weight: bold
