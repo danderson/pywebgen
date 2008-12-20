@@ -1,45 +1,54 @@
 VARS:
-  header_height: 1.3em
   menu_width: 10em
 
-body:
-  background-color: hex(eee)
-  margin: 0
-  padding: $header_height 0 0 $menu_width
-
-h1:
-  position: absolute
-  top: 0
-  left: 0
-  right: 0
+html:
   margin: 0
   padding: 0
-  padding-left: 1em
-  height: 1.3em
-  background-color: hex(007)
-  color: white
-  font-variant: small-caps
+
+body:
+  background-color: white
+  margin: 0 15%
+  padding: 0
+  font-family: sans-serif
+  color: hex(333)
+  text-align: justify
+
+h1:
+  color: black
+  font-family: Tahoma, sans-serif
+  margin: 0
+  padding: 0.5em 0
+  font-weight: normal
 
 id(menu):
   position: absolute
-  top: $header_height
-  left: 0
-  width: $menu_width
-  margin: 2.5em 0
-  padding: 1em
+  top: 2em
+  right: 15%
+  margin: 0
+  padding: 0
   list-style-type: none
-  border: 1px solid hex(bbb)
+  height: 2em
+  font-family: Tahoma, sans-serif
 
   li:
-    width: 100%
-    margin: 0
-    padding: 0.5em 0
+    display: inline
+    margin: 0 1em
+    padding: 0
 
     a:
       text-decoration: none
-      font-weight: bold
-      color: hex(00a)
+      color: hex(999)
+      width: 100%
+
+    a:hover:
+      color: black
 
 id(contents):
-  padding: 0
-  margin: 2em 0 0 3em
+  border-top: 1px hex(aaa) solid
+  padding: 1em 0 0 0
+
+p.intro:
+  margin-left: 20%
+  font-size: larger
+  color: black
+
