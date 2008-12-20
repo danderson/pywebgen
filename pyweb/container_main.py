@@ -8,6 +8,7 @@ import os.path
 import sys
 
 import pyweb.container
+import pyweb.devserver
 import pyweb.pywebgen
 
 USAGE = '''%prog command args...
@@ -25,6 +26,9 @@ Commands:
 
   gc
     Garbage collect all website versions older than 'current'.
+
+  devel
+    Run a development webserver on localhost:8000
 '''
 
 
@@ -91,11 +95,20 @@ def GcCmd(_):
     return 0
 
 
+def DevCmd(_):
+    e = _MakeEnv()
+    print 'Listening on http://localhost:8000/'
+    pyweb.devserver.RunDevServer(
+        ('127.0.0.1', 8000), e.source_dir, e.devel_dir)
+    print 'Shutting down.'
+
+
 _COMMANDS = {
     'generate': GenerateCmd,
     'versions': VersionsCmd,
     'setcurrent': SetCurrentCmd,
-    'gc': GcCmd
+    'gc': GcCmd,
+    'dev': DevCmd
 }
 
 def main():

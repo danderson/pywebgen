@@ -29,6 +29,7 @@ _VERSIONS_DIR = 'versions'
 _DEPLOY_DIR = 'deploy'
 _CURRENT_DIR = 'current'
 _LATEST_DIR = 'latest'
+_DEVEL_DIR = 'devel'
 
 _CONTAINER_SCRIPT_NAME = 'pwg'
 _CONTAINER_SCRIPT = '''#!/usr/bin/env python
@@ -74,6 +75,7 @@ class Container(object):
         self.deploy_dir = self._PathInRoot(_DEPLOY_DIR)
         self.current_dir = self._PathInRoot(_CURRENT_DIR)
         self.latest_dir = self._PathInRoot(_LATEST_DIR)
+        self.devel_dir = self._PathInRoot(_DEVEL_DIR)
 
         if not os.path.exists(self.deploy_dir):
             self.deploy_dir = None
