@@ -111,17 +111,17 @@ Listening on http://localhost:8000/
   generate</tt>.</p>
 
 <script type="text/javascript">
-$(document).ready(function() {
-  if ($('#contents h2').length> 1) {
-    $('<h2>Table of contents</h2>')
+jQuery(document).ready(function() {
+  if (jQuery('#contents h2').length> 1) {
+    jQuery('<h2>Table of contents</h2>')
       .insertBefore('h2:first')
       .after('<ul id="toc"></ul>');
 
-    $('#contents h2:not(:first)').each(function(index) {
-      $('<li></li>').appendTo('#toc');
-      $('<a></a>')
+    jQuery('#contents h2:not(:first)').each(function(index) {
+      jQuery('<li></li>').appendTo('#toc');
+      jQuery('<a></a>')
         .attr({ 'href': '#' + this.id })
-        .html($(this).html())
+        .html(jQuery(this).html())
         .appendTo('#toc li:last');
     });
   }
