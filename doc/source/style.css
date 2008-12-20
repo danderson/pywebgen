@@ -1,0 +1,45 @@
+VARS:
+  header_height: 1.3em
+  menu_width: 10em
+
+body:
+  background-color: hex(eee)
+  margin: 0
+  padding: $header_height 0 0 $menu_width
+
+h1:
+  position: absolute
+  top: 0
+  left: 0
+  right: 0
+  margin: 0
+  padding: 0
+  padding-left: 1em
+  height: 1.3em
+  background-color: hex(007)
+  color: white
+  font-variant: small-caps
+
+id(menu):
+  position: absolute
+  top: $header_height
+  left: 0
+  width: $menu_width
+  margin: 2.5em 0
+  padding: 1em
+  list-style-type: none
+  border: 1px solid hex(bbb)
+
+  li:
+    width: 100%
+    margin: 0
+    padding: 0.5em 0
+
+    a:
+      text-decoration: none
+      font-weight: bold
+      color: hex(00a)
+
+id(contents):
+  padding: 0
+  margin: 2em 0 0 3em

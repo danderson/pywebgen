@@ -1,0 +1,35 @@
+{% extends "_base.html" %}
+
+{% block contents %}
+
+<p>Pywebgen is a toolkit that helps you generate and manage a static
+  website.</p>
+
+<p>A static website is composed only of plain HTML pages and data,
+  with no dynamic languages such as PHP, no CGI scripts, just plain
+  files that the web server can serve without thinking about it.</p>
+
+<p>The problem with static websites is that there is often a lot of
+  boilerplate: page headers, footers, menu bars... Copying and pasting
+  this boilerplate between files is very error-prone (as well as being
+  aesthetically offensive), and you usually end up with pages that
+  start slowly drifting apart, as small mutations start taking
+  hold.</p>
+
+<p>Pywebgen solves this problem by letting you create your website as
+  a set of template files, and then generating the actual site from
+  these templates. This lets you write your boilerplate once, and
+  refer to it cleanly from all your pages.</p>
+
+<p>Pywebgen also offers some basic versionning support: after hacking
+  around with a new iteration of your website, you can instruct
+  pywebgen to generate a new version of your site, check this version
+  to make sure it looks right, and then give the order to deploy it as
+  the new "production" version of the site. This distinction between
+  generated versions and the version that is actually live lets you
+  develop and experiment in peace, without fear that you'll suddenly
+  break your site for all your visitors.</p>
+
+<p>Blah, blah, blah... I really suck at selling stuff.</p>
+
+{% endblock %}
