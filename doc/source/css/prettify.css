@@ -1,0 +1,15 @@
+pre.prettyprint:
+  padding: 2px
+  border: 1px solid hex(888)
+
+  .str: {color: hex(080)}
+  .kwd: {color: hex(008)}
+  .com: {color: hex(800)}
+  .typ: {color: hex(606)}
+  .lit: {color: hex(066)}
+  .pun: {color: hex(660)}
+  .pln: {color: hex(000)}
+  .tag: {color: hex(008)}
+  .atn: {color: hex(606)}
+  .atv: {color: hex(080)}
+  .dec: {color: hex(606)}

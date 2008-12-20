@@ -4,14 +4,19 @@
   <head>
     {% block header %}
     <title>{% block title %}pywebgen{% endblock %}</title>
-    <link rel="stylesheet" href="style.css" type="text/css">
+    <link rel="stylesheet" href="css/style.css" type="text/css">
+    <link rel="stylesheet" href="css/prettify.css" type="text/css">
+    <script type="text/javascript" src="js/prettify.js"></script>
+    <script type="text/javascript"
+            src="http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.min.js">
+    </script>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="author" content="David Anderson">
     <!-- Generated on {{timestamp}} -->
     {% endblock %}
   </head>
-  <body>
-    <h1>pywebgen</h1>
+  <body onload="prettyPrint()">
+    <h1><span style="color: #3779af">py</span>webgen</h1>
     <ul id="menu">
       <li><a href="index.html">Home</a></li>
       <li><a href="installing.html">Installing</a></li>
