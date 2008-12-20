@@ -2,3 +2,4 @@
 *.pyc
 jinja2_repos
 jinja2
+doc/versions

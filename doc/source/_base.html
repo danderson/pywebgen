@@ -1,0 +1,19 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+          "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en-us">
+  <head>
+    {% block header %}
+    <title>{% block title %}pywebgen{% endblock %}</title>
+    <link rel="stylesheet" href="style.css" type="text/css">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="author" content="David Anderson">
+    <!-- Generated on {{timestamp}} -->
+    {% endblock %}
+  </head>
+  <body>
+    <div id="contents">
+      {% block contents %}
+      {% endblock %}
+    </div>
+  </body>
+</html>
