@@ -95,7 +95,7 @@ def GcCmd(_):
     return 0
 
 
-def DevCmd(_):
+def DevelCmd(_):
     e = _MakeEnv()
     print 'Listening on http://localhost:8000/'
     pyweb.devserver.RunDevServer(
@@ -108,7 +108,7 @@ _COMMANDS = {
     'versions': VersionsCmd,
     'setcurrent': SetCurrentCmd,
     'gc': GcCmd,
-    'dev': DevCmd
+    'devel': DevelCmd
 }
 
 def main():
