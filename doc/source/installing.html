@@ -3,8 +3,26 @@
 {% block title %}pywebgen / installing{% endblock %}
 
 {% block contents %}
+<script type="text/javascript">
+jQuery(document).ready(function() {
+  if (jQuery('#contents h2').length> 1) {
+    jQuery('<h2>Table of contents</h2>')
+      .insertBefore('h2:first')
+      .after('<ul id="toc"></ul>');
 
-<img class="intro" src="images/install.jpg" />
+    jQuery('#contents h2:not(:first)').each(function(index) {
+      jQuery('<li></li>').appendTo('#toc');
+      jQuery('<a></a>')
+        .attr({ 'href': '#' + this.id })
+        .html(jQuery(this).html())
+        .appendTo('#toc li:last');
+    });
+  }
+});
+</script>
+
+<img class="intro" src="images/install.jpg"
+     alt="Installing pygenweb" />
 
 <p class="intro">Interested in test driving pywebgen? Cool! But before
   you can play with it, you'll need to install it.</p>
