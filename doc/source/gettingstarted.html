@@ -68,8 +68,8 @@ $ pywebgen startsite demo
 
 <h2 id="a-first-page">A first page</h2>
 
-<p>Create the file <tt>demo/source/index.html</tt>, containing the
-  following:</p>
+<p>Go to the <tt>demo</tt> directory and create the
+  file <tt>source/index.html</tt>, containing the following:</p>
 
 <pre class="prettyprint">{% filter escape %}{% raw %}
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
@@ -142,7 +142,7 @@ Listening on http://localhost:8000/
   we start adding more, we're going to duplicate all the heavy
   boilerplate that HTML (and perhaps your website) have.</p>
 
-<p>Instead, create <tt>demo/source/_base.html</tt> with the following
+<p>Instead, create <tt>source/_base.html</tt> with the following
   contents:</p>
 
 <pre class="prettyprint lang-html">{% filter escape %}{% raw %}
@@ -159,7 +159,7 @@ Listening on http://localhost:8000/
 </html>
 {% endraw %}{% endfilter %}</pre>
 
-<p>And modify <tt>demo/source/index.html</tt>:</p>
+<p>And modify <tt>source/index.html</tt>:</p>
 
 <pre class="prettyprint lang-html">{% filter escape %}{% raw %}
 {% extends "_base.html" %}
@@ -177,7 +177,7 @@ Listening on http://localhost:8000/
   injecting your custom block contents into the base template.</p>
 
 <p>The difference of course is in maintainability: you can now create
-  a <tt>demo/source/about.html</tt> page that reuses exactly the same
+  a <tt>source/about.html</tt> page that reuses exactly the same
   base boilerplate:</p>
 
 <pre class="prettyprint lang-html">{% filter escape %}{% raw %}
@@ -195,7 +195,7 @@ Listening on http://localhost:8000/
 <p>Once you've created this page,
 {{"http://localhost:8000/about.html"|urlize}} through the development
 webserver. You now have two pages that are using the same basic page
-scaffolding. Anything you add to <tt>demo/source/_base.html</tt> will
+scaffolding. Anything you add to <tt>source/_base.html</tt> will
 propagate to all the pages in your site that base themselves on
 it.</p>
 
@@ -265,7 +265,7 @@ body {
 <p>Aside from these extra features, the language should be
 self-explanatory: specify a CSS selector, then define the CSS style
 properties that it should have. Here is a stylesheet for our trivial
-website, which you could place in <tt>demo/source/style.css</tt></p>
+website, which you could place in <tt>source/style.css</tt></p>
 
 <pre>
 body:
