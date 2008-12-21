@@ -105,7 +105,11 @@ class CssYamlProcessor(_Processor):
 class IgnoreProtectedFileProcessor(_Processor):
     """Ignore temporary and hidden files."""
     def CanProcessFile(self, filename):
-        return os.path.basename(filename).startswith('_') or filename[-1] == '~'
+        base = os.path.basename(filename)
+        if base.startswith('_') or base.startswith('.#') or base.endswith('~'):
+            return True
+        else:
+            return False
 
     def ProcessFile(self, in_path, out_path):
         # Do nothing, effectively skipping this file.
